@@ -1,0 +1,7 @@
+[
+  {
+    "url": "https://freek.dev/",
+    "author": "Freek Van der Herten",
+    "css": "body > div.font-sans.text-black > div > div > main > article > header > p > a:nth-child(1) > time"
+  }
+]
