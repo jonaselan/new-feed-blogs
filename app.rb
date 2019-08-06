@@ -21,16 +21,23 @@ def main
     # get all first five dates
     created_at = driver.find_elements(css: blog['path_to_created_at']).map(&:text)[0, 5]
 
-    # get all the first five titles and links
-    titles_and_links = driver.find_elements(css: blog['path_to_title']).map { |result|
+    # get all the first five titles and url
+    title_and_url = driver.find_elements(css: blog['path_to_title']).map { |result|
       {
         title: result.text,
-        link: result.attribute('href')
+        url: result.attribute('href')
       }
     }[0, 5]
 
-    created_at.each do |date|
-      puts seriealize_date(date)
+    # TODO: The parameter for the condition is the current date.
+    # Maybe it would be better to retrieve the last date this script was run
+    d = DateTime.now
+    d.strftime("%d-%m-%Y")
+    created_at.each_with_index do |date, index|
+      if seriealize_date(date) > Date.parse("3-08-2019")
+        puts title_and_url[index][:title]
+        # puts title_and_url[index][:link]
+      end
     end
   end
 
@@ -39,6 +46,7 @@ end
 
 def read_blogs
   file = File.read('blogs.json')
+
   JSON.parse(file)
 end
 
