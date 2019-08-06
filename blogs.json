@@ -2,6 +2,7 @@
   {
     "url": "https://freek.dev/",
     "author": "Freek Van der Herten",
-    "css": "body > div.font-sans.text-black > div > div > main > article > header > p > a:nth-child(1) > time"
+    "path_to_title": "body > div.font-sans.text-black > div > div > main > article > header > h2 > a",
+    "path_to_created_at": "body > div.font-sans.text-black > div > div > main > article > header > p > a:nth-child(1) > time"
   }
 ]
