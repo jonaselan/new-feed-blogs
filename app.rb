@@ -3,13 +3,13 @@ require 'selenium-webdriver'
 require 'json'
 require 'date'
 
-# https://sebastiandedeyne.com/
-# https://stitcher.io/
-# https://www.joelonsoftware.com/
-
 # - Criar um html para ler esse json
 
 def main
+  return puts 'This script already updated' if already_execute_today?
+
+  last_check_date = seriealize_date(last_check)
+
   driver = Selenium::WebDriver.for :firefox
 
   read_file('blogs.json').each_with_index do |blog, blog_index|
@@ -31,7 +31,7 @@ def main
 
     # loop in all five first articles
     created_at.each_with_index do |date, index|
-      if seriealize_date(date) > seriealize_date(last_check)
+      if seriealize_date(date) > last_check_date
         new_articles.push({
           title: title_and_url[index][:title],
           url: title_and_url[index][:url]
@@ -39,12 +39,9 @@ def main
       end
     end
 
-    unless new_articles.empty?
-      write_new_articles(new_articles, blog_index)
-    end
+    write_new_articles(new_articles, blog_index) unless new_articles.empty?
 
     save_last_check
-
   end
 
   driver.quit
@@ -74,9 +71,7 @@ end
 
 def seriealize_month(month)
   # check if the month already is a integer
-  if month.to_i.positive?
-    return month
-  end
+  return month if month.to_i.positive?
 
   month = month.downcase
 
@@ -123,9 +118,16 @@ end
 
 def save_last_check
   checks = read_file('checks.json')
-  date = DateTime.now.strftime('%m-%d-%Y')
 
-  write_file(checks.push(date), 'checks.json')
+  write_file(checks.push(today), 'checks.json') unless already_execute_today?
+end
+
+def already_execute_today?
+  last_check == today ? true : false
+end
+
+def today
+  DateTime.now.strftime('%m-%d-%Y')
 end
 
 main
