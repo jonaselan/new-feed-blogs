@@ -7,14 +7,12 @@ require 'date'
 # https://stitcher.io/
 # https://www.joelonsoftware.com/
 
-# - recuperar esse tempo e verificar há algo novo
-# - se tiver, salvar em um json os novos textos
 # - Criar um html para ler esse json
 
 def main
   driver = Selenium::WebDriver.for :firefox
 
-  read_blogs.each do |blog|
+  read_file('blogs.json').each_with_index do |blog, blog_index|
     # access blog
     driver.get blog['url']
 
@@ -29,29 +27,43 @@ def main
       }
     }[0, 5]
 
-    # TODO: The parameter for the condition is the current date.
-    # Maybe it would be better to retrieve the last date this script was run
-    d = DateTime.now
-    d.strftime("%d-%m-%Y")
+    new_articles = []
+
+    # loop in all five first articles
     created_at.each_with_index do |date, index|
-      if seriealize_date(date) > Date.parse("3-08-2019")
-        puts title_and_url[index][:title]
-        # puts title_and_url[index][:link]
+      if seriealize_date(date) > seriealize_date(last_check)
+        new_articles.push({
+          title: title_and_url[index][:title],
+          url: title_and_url[index][:url]
+        })
       end
     end
+
+    unless new_articles.empty?
+      write_new_articles(new_articles, blog_index)
+    end
+
+    save_last_check
+
   end
 
   driver.quit
 end
 
-def read_blogs
-  file = File.read('blogs.json')
+def read_file(filename)
+  JSON.parse(
+    File.read(filename, symbolize_names: true)
+  )
+end
 
-  JSON.parse(file)
+def write_file(hash, filename)
+  File.open(filename, 'w') do |f|
+    f.write(hash.to_json)
+  end
 end
 
 def seriealize_date(date)
-  month, day, year = date.split(Regexp.union([' ', ', ']))
+  month, day, year = date.split(Regexp.union([' ', ', ', '-']))
 
   Date.parse("#{seriealize_day(day)}-#{seriealize_month(month)}-#{year}")
 end
@@ -61,6 +73,11 @@ def seriealize_day(day)
 end
 
 def seriealize_month(month)
+  # check if the month already is a integer
+  if month.to_i.positive?
+    return month
+  end
+
   month = month.downcase
 
   result =
@@ -93,4 +110,22 @@ def seriealize_month(month)
   result
 end
 
-main()
+def last_check
+  read_file('checks.json')[-1]
+end
+
+def write_new_articles(articles, blog_index)
+  blogs = read_file('blogs.json')
+  blogs[blog_index]['articles'] = articles
+
+  write_file(blogs, 'blogs.json')
+end
+
+def save_last_check
+  checks = read_file('checks.json')
+  date = DateTime.now.strftime('%m-%d-%Y')
+
+  write_file(checks.push(date), 'checks.json')
+end
+
+main
