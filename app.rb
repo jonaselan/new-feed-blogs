@@ -3,8 +3,6 @@ require 'selenium-webdriver'
 require 'json'
 require 'date'
 
-# - Criar um html para ler esse json
-
 def main
   return puts 'This script already updated' if already_execute_today?
 
