@@ -23,7 +23,7 @@ $ npm install
 
 ```bash
 # retrive new articles for the configured blogs
-$ ruby scraper/app.rb
+$ ruby app.rb
 
 # run the serve to see the result
 $ node index.js # or nodemon
