@@ -9,7 +9,7 @@
 
 ## Installation
 
-```
+```bash
 # install selenium gem
 # you need install the driver for browser too. In my case
 # I use firefox, so I install geckodriver
@@ -21,7 +21,7 @@ $ npm install
 
 ## How to use
 
-```
+```bash
 # retrive new articles for the configured blogs
 $ ruby scraper/app.rb
 
