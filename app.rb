@@ -121,7 +121,7 @@ def save_last_check
 end
 
 def already_execute_today?
-  last_check == today ? true : false
+  last_check == today
 end
 
 def today
