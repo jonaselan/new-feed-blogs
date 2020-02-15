@@ -33,6 +33,6 @@ $ node index.js # or nodemon
 
 ## How it was done
 
-I set up only two blogs. They are mapped on `blogs.json`. When the ruby script is executed, it is checked the last time it was executed so that it can retrieve the five articles written since this date. The result is saved to `blogs.json`.
+I set up just two blogs. They are mapped in the `blogs.json` file. When the ruby script is executed, it is checked the last time it was executed, to retrieve the five articles written since that date. The result is saved to `blogs.json`. 
 
-When index.js is executed, a view is built, using Pug template, based on articles saved on `blogs.json`.
+When index.js is run, a view is created, using the Pug model, based on articles saved on `blogs.json`.
